@@ -1,10 +1,11 @@
 const { Router } = require("express");
 const adminRouter = Router();
-const { adminModel } = require("../database/db");
+const { adminModel, courseModel } = require("../database/db");
 const jwt = require("jsonwebtoken");
 const { z } = require("zod");
 const bcrypt = require("bcrypt");
 require("dotenv").config();
+const { adminMiddleware } = require("../middlewares/admin");
 
 const JWT_SECRET = process.env.JWR_ADMIN_SECRET;
 
@@ -43,25 +44,27 @@ adminRouter.post("/signin", async function (req, res) {
   const validateData = adminSchema.safeParse(req.body);
 
   const { email, password } = req.body;
-  
-  try {    
+
+  try {
     const user = await adminModel.findOne({
       email: email,
     });
 
-    const matchPassword = await bcrypt.compare(password,user.password)
+    const matchPassword = await bcrypt.compare(password, user.password);
 
     if (user && matchPassword) {
-      const token = jwt.sign({
+      const token = jwt.sign(
+        {
           id: user._id,
-        },JWT_SECRET);
+        },
+        JWT_SECRET
+      );
 
       // do cookie logic
 
       res.status(200).json({
         token: token,
       });
-
     } else {
       res.status(403).json({
         msg: "Incorrect credentials",
@@ -72,16 +75,31 @@ adminRouter.post("/signin", async function (req, res) {
   }
 });
 
-adminRouter.post("/course", function (req, res) {
-  res.json({
-    msg: "add course endpoint",
-  });
+adminRouter.post("/course", adminMiddleware, async function (req, res) {
+  const adminId = req.userId;
+
+  const { title, description, imageUrl, price } = req.body;
+
+  try {
+    const course = await courseModel.create({
+      title: title,
+      description: description,
+      imageUrl: imageUrl,
+      price: price,
+    });
+
+    res.status(200).json({
+      message: "Course is created",
+      courseId: course._id,
+    });
+  } catch (error) {
+    console.log(error);
+  }
+
 });
 
-adminRouter.put("/course", function (req, res) {
-  res.json({
-    msg: "update course endpoint",
-  });
+adminRouter.put("/course",adminMiddleware, function (req, res) {
+  
 });
 
 adminRouter.get("/course/bluk", function (req, res) {
