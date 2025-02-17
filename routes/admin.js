@@ -1,38 +1,95 @@
-const {Router} = require("express");
+const { Router } = require("express");
 const adminRouter = Router();
-const adminModel = require("../database/db")
+const { adminModel } = require("../database/db");
+const jwt = require("jsonwebtoken");
+const { z } = require("zod");
+const bcrypt = require("bcrypt");
+require("dotenv").config();
 
-adminRouter.post("/signup", function(req, res){
-    res.json({
-        msg:"signup endpoint"
-    })
-})
+const JWT_SECRET = process.env.JWR_ADMIN_SECRET;
 
-adminRouter.post("/signin", function(req, res){
-    res.json({
-        msg:"signin endpoint"
-    })
-})
+const adminSchema = z.object({
+  email: z.string().email(),
+  password: z.string().min(8),
+  // .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%&*-])[A- Za-z\d!@#$%&*-]{8,}$/)
+  firstName: z.string().min(3).max(10),
+  lastName: z.string().min(3).max(10),
+});
 
-adminRouter.post("/course", function(req, res){
-    res.json({
-        msg:"add course endpoint"
-    })
-})
+adminRouter.post("/signup", async function (req, res) {
+  const validateData = adminSchema.safeParse(req.body);
 
-adminRouter.put("/course", function(req, res){
-    res.json({
-        msg:"update course endpoint"
-    })
-})
+  try {
+    const { email, password, firstName, lastName } = req.body;
 
-adminRouter.get("/course/bluk", function(req, res){
-    res.json({
-        msg:"get all the courses endpoint"
-    })
-})
+    const hashedPassword = await bcrypt.hash(password, 3);
 
+    await adminModel.create({
+      email: email,
+      password: hashedPassword,
+      firstName: firstName,
+      lastName: lastName,
+    });
+  } catch (error) {
+    console.log(error);
+  }
+
+  res.json({
+    msg: "Signed-Up successful",
+  });
+});
+
+adminRouter.post("/signin", async function (req, res) {
+  const validateData = adminSchema.safeParse(req.body);
+
+  const { email, password } = req.body;
+  
+  try {    
+    const user = await adminModel.findOne({
+      email: email,
+    });
+
+    const matchPassword = await bcrypt.compare(password,user.password)
+
+    if (user && matchPassword) {
+      const token = jwt.sign({
+          id: user._id,
+        },JWT_SECRET);
+
+      // do cookie logic
+
+      res.status(200).json({
+        token: token,
+      });
+
+    } else {
+      res.status(403).json({
+        msg: "Incorrect credentials",
+      });
+    }
+  } catch (error) {
+    console.log(error);
+  }
+});
+
+adminRouter.post("/course", function (req, res) {
+  res.json({
+    msg: "add course endpoint",
+  });
+});
+
+adminRouter.put("/course", function (req, res) {
+  res.json({
+    msg: "update course endpoint",
+  });
+});
+
+adminRouter.get("/course/bluk", function (req, res) {
+  res.json({
+    msg: "get all the courses endpoint",
+  });
+});
 
 module.exports = {
-    adminRouter : adminRouter
-}
+  adminRouter: adminRouter,
+};
