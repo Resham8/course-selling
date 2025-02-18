@@ -31,6 +31,8 @@ const purchaseSchema = new Schema({
     courseId : {type:ObjectId, ref:'course'}
 });
 
+// should build a course content schema as well to store the content of course
+
 const userModel = mongoose.model("user", userSchema);
 const adminModel = mongoose.model("admin", adminSchema);
 const courseModel = mongoose.model("course", courseSchema);

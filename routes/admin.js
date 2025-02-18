@@ -7,7 +7,7 @@ const bcrypt = require("bcrypt");
 require("dotenv").config();
 const { adminMiddleware } = require("../middlewares/admin");
 
-const JWT_SECRET = process.env.JWR_ADMIN_SECRET;
+const JWT_SECRET = process.env.JWT_ADMIN_SECRET;
 
 const adminSchema = z.object({
   email: z.string().email(),
@@ -86,6 +86,7 @@ adminRouter.post("/course", adminMiddleware, async function (req, res) {
       description: description,
       imageUrl: imageUrl,
       price: price,
+      creatorId: adminId,
     });
 
     res.status(200).json({
@@ -95,17 +96,53 @@ adminRouter.post("/course", adminMiddleware, async function (req, res) {
   } catch (error) {
     console.log(error);
   }
-
 });
 
-adminRouter.put("/course",adminMiddleware, function (req, res) {
-  
+adminRouter.put("/course", adminMiddleware, async function (req, res) {
+  const adminId = req.userId;
+  const { title, description, imageUrl, price, courseId } = req.body;
+
+  try {
+    const findCourse = await courseModel.findOne({
+      _id: courseId,
+      creatorId: adminId,
+    });
+
+    if(!findCourse){
+      return res.status(404).json({
+        message:"Course not found"
+      })
+    }
+
+    const course = await courseModel.updateOne({
+        _id: courseId,
+        creatorId: adminId,
+      },
+      {
+        title: title,
+        description: description,
+        imageUrl: imageUrl,
+        price: price,
+      });
+
+    res.status(200).json({
+      message: "Course is updated"
+    });
+
+  } catch (error) {
+    console.log(error);
+  }
 });
 
-adminRouter.get("/course/bluk", function (req, res) {
-  res.json({
-    msg: "get all the courses endpoint",
-  });
+adminRouter.get("/course/bulk", adminMiddleware, async function (req, res) {
+  const adminId = req.userId;
+  const courses = await courseModel.find({creatorId:adminId});
+
+  if(courses){
+    res.status(200).json({
+      courses:courses
+    })
+  }
 });
 
 module.exports = {

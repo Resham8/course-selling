@@ -3,7 +3,8 @@ const userRouter = Router();
 const jwt = require("jsonwebtoken");
 const { z } = require("zod");
 const bcrypt = require("bcrypt");
-const { userModel } = require("../database/db");
+const { userModel, purchaseModel, courseModel } = require("../database/db");
+const { userMiddleware } = require("../middlewares/user");
 require("dotenv").config();
 
 const JWT_SECRET = process.env.JWT_USER_SECRET;
@@ -74,12 +75,25 @@ userRouter.post("/signin", async function (req, res) {
   }
 });
 
-userRouter.get("/purchases", function (req, res) {
+userRouter.get("/purchases", userMiddleware,async function (req, res) {
+  const userId = req.userId;
+
+  const purchases = await purchaseModel.find({
+    userId:userId
+  })  
+
+  const courses = await courseModel.find({
+    _id: {$in: purchases.map(x => x.courseId)}
+  })
+
   res.json({
-    msg: "all purchases",
-  });
+    purchases,
+    courses
+  })
 });
 
 module.exports = {
   userRouter: userRouter,
 };
+
+// test the purchases , preview, get purchases endpoints
