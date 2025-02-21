@@ -40,7 +40,7 @@ userRouter.post("/signup", async function (req, res) {
   });
 });
 
-userRouter.post("/signin", async function (req, res) {
+userRouter.post("/login", async function (req, res) {
   const validateData = userSchema.safeParse(req.body);
 
   const { email, password } = req.body;

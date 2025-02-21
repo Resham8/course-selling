@@ -40,7 +40,7 @@ adminRouter.post("/signup", async function (req, res) {
   });
 });
 
-adminRouter.post("/signin", async function (req, res) {
+adminRouter.post("/login", async function (req, res) {
   const validateData = adminSchema.safeParse(req.body);
 
   const { email, password } = req.body;
