@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Log In</title>
+    <link rel="stylesheet" href="registration.css">
+    
+</head>
+<body>
+    <div class="blob"></div>
+    <div class="wrapper" id="loginForm">
+        <form action="">
+            <h2>Log In</h2>
+            <div class="input-box">
+                <input type="email" id="email" placeholder=" " required>
+                <label for="email">Email</label>                
+            </div>
+            <div class="input-box">
+                <input type="password" id="password" placeholder=" " required>
+                <label for="password">Password</label>
+            </div>
+            <div class="remember-me">
+                <label><input type="checkbox"> Remember me</label>
+            </div>
+            <button type="submit">Log In</button>
+            <div class="register-link">
+                <p>Don't have an account? <a href="#" class="redirect-link" data-form="signup">Register</a></p>
+            </div>            
+        </form>
+    </div>
+    <div class="sign-up-wrapper" id="signupForm" style="display: none;">
+        <form action="">
+            <h2>Sign Up</h2>
+            <div class="input-box">
+                <input type="text" id="firstName" placeholder=" " required>
+                <label for="firstName">FirstName</label>                
+            </div>
+            <div class="input-box">
+                <input type="text" id="lastName" placeholder=" " required>
+                <label for="lastName">LastName</label>                
+            </div>
+            <div class="input-box">
+                <input type="email" id="email" placeholder=" " required>
+                <label for="email">Email</label>                
+            </div>
+            <div class="input-box">
+                <input type="password" id="password" placeholder=" " required>
+                <label for="password">Password</label>
+            </div>
+            <div class="remember-me">
+                <label><input type="checkbox"> Remember me</label>
+            </div>
+            <button type="submit">Log In</button>
+            <div class="register-link">
+                <p>Already have an account? <a href="#" class="redirect-link" data-form="login">LogIn</a></p>
+            </div>            
+        </form>
+    </div>
+    <script src="registration.js"></script>
+</body>
+</html>
