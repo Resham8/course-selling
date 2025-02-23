@@ -5,16 +5,17 @@
 }
 
 body {
-    min-height: 200vh;
+    min-height: 100vh;
     background-color: plum;
 }
 
 .primary-header {
     position: sticky;
     top: 0;
-    background-color: plum;
+    background-color: rgba(255, 255, 255, 0.5);
     width: 100%;
     z-index: 999;
+    
 }
 
 .site-navigations {
@@ -22,6 +23,7 @@ body {
     justify-content: space-between;
     align-items: center;
     padding: 1rem;
+    color: rgb(39, 33, 71);
 }
 
 header ul {
@@ -31,7 +33,8 @@ header ul {
 
 header a {
     text-decoration: none;
-    color: white;
+    color: inherit; 
+    /* since a tag does not inherit the color from thier parent by default */
     cursor: pointer;
 }
 
@@ -41,13 +44,50 @@ header ul li {
 }
 
 header .logo {
-    color: white;
     font-size: 1.7rem;
     font-family: "Bad Script", serif;
     font-weight: 700;
 }
 
+.nav-bg{
+    transition: all .5s ease-in-out;
+    background-color: white;
+    color: black;
+    border-bottom: 2px solid lightgray;
+}
+
 .banner {
-    padding: 2rem;
-    color: white;
+    width: 100%;
+    /* border: 2px solid black; */
+    height: 500px;
+    background-position: center;
+    background-size: cover;
+    background-image: url(https://cdn.elearningindustry.com/wp-content/uploads/2016/12/4-methods-build-elearning-websites.png);
+    background-attachment: fixed;
+    height: 600px;
+}
+
+.course-wrapper{
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+}
+
+
+.courses-preview{
+    border: 2px solid black;
+    width: 100%;
+    height: auto;
+    min-height: 500px;
+}
+
+.courses-preview h1 {
+    text-align: center;
+    margin: 1.5rem;
+    font-size: 2rem;
+    font-family: serif;
+
+}
+.card img {
+    width: 300px;
+    
 }

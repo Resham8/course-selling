@@ -4,14 +4,12 @@ const { userRouter } = require("./routes/user");
 const { courseRouter } = require("./routes/course");
 const { adminRouter } = require("./routes/admin");
 const cors = require("cors");
-const session = require('express-session');
+// const session = require('express-session');
 require('dotenv').config();
 
 const app = express();
 app.use(cors())
 app.use(express.json())
-
-
 
 app.use("/user", userRouter);
 app.use("/course", courseRouter);
