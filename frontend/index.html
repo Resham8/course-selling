@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Code Nest</title>
-    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="css/style.css" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -23,8 +23,8 @@
           <li><a href="/frontend/admin.html">Admin Dashboard</a></li>
         </ul>
         <ul>
-          <li><a href="/frontend/login.html">Sign Up</a></li>
-          <li><a href="/frontend/login.html">Log In</a></li>
+          <li><a onclick="setRole('admin')">Admin</a></li>
+          <li><a onclick="setRole('user')">User</a></li>
         </ul>
       </div>
     </header>
@@ -40,6 +40,6 @@
       <div id="course-container" class="card-container">        
       </div>
     </section>
-    <script src="script.js"></script>
+    <script src="js/script.js"></script>
   </body>
 </html>
