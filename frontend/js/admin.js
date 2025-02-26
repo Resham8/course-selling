@@ -9,11 +9,11 @@ const modal = document.getElementById("courseModal");
 
 const openModal = document.getElementById("openModal");
 openModal.addEventListener("click", function () {
-  modal.show();
+  modal.showModal();
 });
 
-const closeModel = document.getElementById("closeModalBtn");
-closeModel.addEventListener("click", function () {
+const closeModal = document.getElementById("closeModalBtn");
+closeModal.addEventListener("click", function () {
   modal.close();
 });
 
@@ -53,58 +53,72 @@ addForm.addEventListener("submit", async function (event) {
     price: price.value,
   };
 
-  const endpoint = "course";
-  const method = "POST"
-  const response = await postData(bodyData, endpoint,method);
+  const courseIdInput = document.getElementById("courseId");
+  let endpoint = "course";
+  let method = "POST";
+
+  if (courseIdInput && courseIdInput.value) {
+    bodyData.courseId = courseIdInput.value
+    endpoint = `course`;
+    method = "PUT";    
+  }
+
+  const response = await postData(bodyData, endpoint, method);
+  if (!response) {
+    alert("Failed to add course");
+    return;
+  }
+
   console.log(response);
   alert(response.message);
-
-  const courseId = response.courseId;
-  if(courseId){
+  
+  if (response.courseId || (courseIdInput && courseIdInput.value)) {
     modal.close();
-    fetchCourses(); 
+    fetchCourses();
+
+    addForm.reset();
+    if (courseIdInput) {
+      courseIdInput.value = "";
+    }
   }
 });
 
 async function editCourse(courseId) {
-  const token = localStorage.getItem("token");
-  
-  try {
+  token = localStorage.getItem("token");
 
+  try {
     const response = await fetch(`${ADMIN_URL}/course/${courseId}`, {
       method: "GET",
       headers: {
-        "Content-Type": "application/json",
+        "content-Type": "application/json",
         token: token,
-      }
+      },
     });
-    
+
     if (!response.ok) {
-      throw new Error("Failed to fetch course");
+      console.log("error while getting course details");
     }
+
+    const data = await response.json();
+    modal.showModal();
     
-    const course = await response.json();
-    
-    document.getElementById("title").value = course.title;
-    document.getElementById("description").value = course.description;
-    document.getElementById("imgUrl").value = course.imageUrl;
-    document.getElementById("price").value = course.price;
-    
-    const courseIdInput = document.getElementById("courseId");
-    if (!courseIdInput) {      
-      const input = document.createElement("input");
-      input.type = "hidden";
-      input.id = "courseId";
-      input.value = course._id;
-      addForm.appendChild(input);
-    } else {
-      courseIdInput.value = course._id;
+    document.getElementById("title").value = data.course.title;
+    document.getElementById("description").value = data.course.description;
+    document.getElementById("imgUrl").value = data.course.imageUrl;
+    document.getElementById("price").value = data.course.price;
+   
+    let courseIdInput = document.getElementById("courseId");
+
+    if (!courseIdInput) {
+      courseIdInput = document.createElement("input");
+      courseIdInput.type = "hidden";
+      courseIdInput.id = "courseId";
+      courseIdInput.name = "courseId";
+      addForm.appendChild(courseIdInput);
     }
-    
-    modal.show();
+    courseIdInput.value = data.course._id;
   } catch (error) {
-    console.error("Error fetching course:", error);
-    alert("Failed to load course details");
+    console.log(error);
   }
 }
 
@@ -124,9 +138,14 @@ function addCourseToDOM(course) {
   const editBtn = document.createElement("button");
   editBtn.classList.add("edit-btn");
 
+  editBtn.setAttribute("data-id", course._id);
+  editBtn.addEventListener("click", function () {
+    const courseId = this.dataset.id;
+    editCourse(courseId);
+  });
+
   const editIcon = document.createElement("i");
   editIcon.classList.add("fa-solid", "fa-pencil");
-
 
   editBtn.appendChild(editIcon);
 
@@ -153,7 +172,7 @@ function addCourseToDOM(course) {
   price.textContent = course.price;
 
   courseContent.appendChild(price);
-  courseCard.setAttribute("data-id", course._id);
+
   courseCard.appendChild(courseContent);
   container.appendChild(courseCard);
 }
@@ -176,26 +195,25 @@ async function postData(bodyData, endpoint, method) {
 }
 
 function fetchCourses() {
-    const token = localStorage.getItem("token");
-    fetch(`${ADMIN_URL}/course/bulk`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        token:token,
-      },
+  const token = localStorage.getItem("token");
+  const container = document.getElementById("course-container");
+  container.innerHTML = "";
+  fetch(`${ADMIN_URL}/course/bulk`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      token: token,
+    },
+  })
+    .then((response) => {
+      if (!response.ok) {
+        console.log(response.status);
+      }
+      return response.json();
     })
-      .then((response) => {
-        if (!response.ok) {
-          console.log(response.status);
-        }
-        return response.json();
-      })
-      .then((courses) => {
-        courses.courses.forEach((course) => addCourseToDOM(course));
-        // console.log(courses)        
-      })
-      .catch((error) => console.log(error));
+    .then((courses) => {
+      courses.courses.forEach((course) => addCourseToDOM(course));
+      // console.log(courses)
+    })
+    .catch((error) => console.log(error));
 }
-
-
-  
