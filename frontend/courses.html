@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Dashboard</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="admin-nav">
+        <h1>User Dashboard</h1>
+        <button class="logout-btn" id="logout-btn">Log Out</button>
+    </div>
+    
+    <div class="dashboard-container">
+        <div class="dashboard-header">
+            <h2 class="dashboard-title">My Learning Dashboard</h2>
+            <p class="dashboard-subtitle">Welcome back! Here are your purchased courses.</p>
+        </div>
+        
+        <div class="dashboard-tabs">
+            <div class="dashboard-tab active" data-tab="my-courses">My Courses</div>
+            <div class="dashboard-tab" data-tab="browse-courses">Browse Courses</div>
+        </div>
+        
+        <div id="my-courses-container" class="courses-container">           
+            <!-- <div class="loading">Loading your courses...</div> -->
+        </div>
+        
+        <div id="browse-courses-container" class="courses-container" style="display: none;">       
+            <!-- <div class="loading">Loading available courses...</div> -->
+        </div>
+    </div>
+
+   <script src="js/course.js"></script>
+</body>
+</html>
