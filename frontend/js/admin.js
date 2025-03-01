@@ -1,7 +1,12 @@
 const ADMIN_URL = "http://localhost:3000/admin";
 
 document.addEventListener("DOMContentLoaded", () => {
-  // checkAdminAuth();
+  const logoutBtn = document.getElementById('logout-btn');
+  logoutBtn.addEventListener('click', () => {
+    localStorage.removeItem('token');
+    window.location.href = 'login.html';
+  });
+  
   fetchCourses();
 });
 
